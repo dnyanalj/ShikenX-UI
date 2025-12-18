@@ -3,16 +3,46 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import LandingNavbar from "@/components/landing/LandingNavbar";
 import Hero from "@/components/landing/Hero";
+
+const scrollToSection = (id) => {
+  const target = document.getElementById(id);
+  if (!target) return;
+
+  const start = window.pageYOffset;
+  const end = target.getBoundingClientRect().top + start;
+  const duration = 1400; // 🔥 increase = slower scroll
+
+  let startTime = null;
+
+  const easeInOutCubic = (t) =>
+    t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+  const animateScroll = (currentTime) => {
+    if (!startTime) startTime = currentTime;
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const easedProgress = easeInOutCubic(progress);
+    window.scrollTo(0, start + (end - start) * easedProgress);
+    if (elapsed < duration) {
+      requestAnimationFrame(animateScroll);
+    }
+  };
+  requestAnimationFrame(animateScroll);
+};
+
 export default function Landing() {
   return (
     <div className="min-h-screen bg-white text-gray-900">
-      <LandingNavbar />
+      <LandingNavbar scrollToSection={scrollToSection} />
 
       {/* HERO */}
-      <Hero></Hero>
+      <Hero ></Hero>
 
       {/* FEATURES */}
-      <section className="min-h-screen flex items-center bg-gray-50">
+      <section
+        id="features"
+        className="min-h-screen flex items-center bg-gray-50"
+      >
         <div className="max-w-7xl mx-auto px-6 w-full">
           {/* Section Header */}
           <div className="text-center mb-16">
@@ -69,7 +99,10 @@ export default function Landing() {
       </section>
 
       {/* HOW IT WORKS */}
-      <section className="min-h-screen flex items-center bg-white">
+      <section
+        id="how-it-works"
+        className="min-h-screen flex items-center bg-white"
+      >
         <div className="max-w-7xl mx-auto px-6 w-full">
           {/* Header */}
           <div className="text-center mb-16">
